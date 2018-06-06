@@ -15,8 +15,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "symfony/cache": "^4.1",
-        "symfony/phpunit-bridge": "^4.1"
+        "symfony/cache": "^4.1"
     },
 	"require-dev": {
         "php-coveralls/php-coveralls": "^2.1",
