@@ -3,8 +3,9 @@
 namespace Mesavolt;
 
 
-use Symfony\Component\Cache\Simple\AbstractCache;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Psr\Cache\CacheItemInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class SimpleCache
 {
@@ -15,12 +16,12 @@ class SimpleCache
 
     private const DEFAULT_CACHE_TTL = self::TTL_5_MINUTES; // 5 minutes
 
-    /** @var AbstractCache */
+    /** @var CacheInterface */
     private $cache;
 
     public function __construct(string $cacheDir, string $namespace = '')
     {
-        $this->cache = new FilesystemCache($namespace, self::DEFAULT_CACHE_TTL, $cacheDir);
+        $this->cache = new FilesystemAdapter($namespace, self::DEFAULT_CACHE_TTL, $cacheDir);
     }
 
     /**
@@ -39,15 +40,23 @@ class SimpleCache
      */
     public function get(string $key, callable $callable, int $ttl = null)
     {
+        /** @var CacheItemInterface $item */
+        $item = $this->cache->getItem($key);
+
         // Cached value is available: just return it
-        if ($this->cache->has($key)) {
-            return json_decode($this->cache->get($key), true);
+        if ($item->isHit()) {
+            return json_decode($item->get(), true);
         }
 
         // Compute value
         $value = json_encode($callable());
-        $this->cache->set($key, $value, $ttl);
 
+        // Store value
+        $item->set($value);
+        $item->expiresAfter($ttl);
+        $this->cache->save($item);
+
+        // return value
         return json_decode($value, true);
     }
 
