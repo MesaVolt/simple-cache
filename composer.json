@@ -16,12 +16,12 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "symfony/cache": "^4.2.12"
+        "symfony/cache": "^4.0||^5.4"
     },
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^7.2",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {

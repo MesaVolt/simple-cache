@@ -41,14 +41,14 @@ class SimpleCacheTest extends TestCase
 
         // first call should execute the callable that increments $this->count
         $value = $this->cache->get($k, $callable, $ttl);
-        $this->assertEquals($value, 'value1');
-        $this->assertEquals(1, $this->hitCount);
+        self::assertEquals('value1', $value);
+        self::assertEquals(1, $this->hitCount);
 
         // second call before TTL expires should *not* execute the callable,
         // so $this->count should still be 1 and value should be the same
         $value = $this->cache->get($k, $callable, $ttl);
-        $this->assertEquals($value, 'value1');
-        $this->assertEquals(1, $this->hitCount);
+        self::assertEquals('value1', $value);
+        self::assertEquals(1, $this->hitCount);
 
         // wait long enough to expire the cache
         sleep($ttl + 1);
@@ -56,8 +56,8 @@ class SimpleCacheTest extends TestCase
         // third call is made after TTL has expired so the callable should be executed again,
         // so $this->count should have been incremented
         $value = $this->cache->get($k, $callable, $ttl);
-        $this->assertEquals('value2', $value);
-        $this->assertEquals(2, $this->hitCount);
+        self::assertEquals('value2', $value);
+        self::assertEquals(2, $this->hitCount);
     }
 
     public function testClear(): void
@@ -72,6 +72,6 @@ class SimpleCacheTest extends TestCase
         // son $this->count should have been incremented
         $value2 = $this->cache->get($k, $callable);
 
-        $this->assertNotEquals($value1, $value2);
+        self::assertNotEquals($value1, $value2);
     }
 }
