@@ -8,32 +8,30 @@ use PHPUnit\Framework\TestCase;
 
 class SimpleCacheTest extends TestCase
 {
-    /** @var SimpleCache */
-    protected $cache;
+    protected SimpleCache $cache;
 
-    protected $hitCount;
+    protected int $hitCount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = new SimpleCache(__DIR__.'/cache-dir');
         $this->cache->clear();
         $this->hitCount = 0;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->cache->clear();
-        $this->cache = null;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         $this->hitCount++;
 
         return "value$this->hitCount";
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $k = 'key';
         $callable = [$this, 'getValue'];
@@ -62,7 +60,7 @@ class SimpleCacheTest extends TestCase
         $this->assertEquals(2, $this->hitCount);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $k = 'k';
         $callable = [$this, 'getValue'];
