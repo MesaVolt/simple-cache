@@ -74,4 +74,18 @@ class SimpleCacheTest extends TestCase
 
         self::assertNotEquals($value1, $value2);
     }
+
+    public function testRead(): void
+    {
+        $this->cache->get('key', static fn() => 'testRead', 10);
+        self::assertEquals('testRead', $this->cache->read('key'));
+
+        self::assertEquals(null, $this->cache->read('absent'));
+    }
+
+    public function testSet(): void
+    {
+        $this->cache->set('key', 'testSet', 10);
+        self::assertEquals('testSet', $this->cache->read('key'));
+    }
 }

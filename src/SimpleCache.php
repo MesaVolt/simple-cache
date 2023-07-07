@@ -48,9 +48,12 @@ class SimpleCache
             return json_decode($item->get(), true);
         }
 
-        // Compute value
-        $value = json_encode($callable());
+        return $this->cache($item, $callable(), $ttl);
+    }
 
+    private function cache(CacheItemInterface $item, $data, ?int $ttl = null)
+    {
+        $value = json_encode($data);
         // Store value
         $item->set($value);
         $item->expiresAfter($ttl);
@@ -58,6 +61,26 @@ class SimpleCache
 
         // return value
         return json_decode($value, true);
+    }
+
+    /**
+     * Set a value in the cache
+     */
+    public function set(string $key, $value, ?int $ttl = null): void
+    {
+        /** @var CacheItemInterface $item */
+        $item = $this->cache->getItem($key);
+        $this->cache($item, $value, $ttl);
+    }
+
+    /**
+     * Read a value from the cache. Returns `null` if the value couldn't be read from the cache.
+     */
+    public function read(string $key)
+    {
+        /** @var CacheItemInterface $item */
+        $item = $this->cache->getItem($key);
+        return $item->isHit() ? json_decode($item->get(), true) : null;
     }
 
     public function clear(): bool
