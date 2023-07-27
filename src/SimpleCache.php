@@ -87,4 +87,21 @@ class SimpleCache
     {
         return $this->cache->clear();
     }
+
+    public function delete(string $key): void
+    {
+        /** @var CacheItemInterface $item */
+        $item = $this->cache->getItem($key);
+        if (!$item->isHit()) {
+            return;
+        }
+
+        $deleted = $this->cache->delete($key);
+        if ($deleted) {
+            return;
+        }
+
+        $item->expiresAt((new \DateTime())->modify('-1 second'));
+        $this->cache->save($item);
+    }
 }

@@ -88,4 +88,13 @@ class SimpleCacheTest extends TestCase
         $this->cache->set('key', 'testSet', 10);
         self::assertEquals('testSet', $this->cache->read('key'));
     }
+
+    public function testDelete(): void
+    {
+        $this->cache->set('key', 'testDelete', SimpleCache::TTL_1_YEAR);
+        self::assertEquals('testDelete', $this->cache->read('key'));
+
+        $this->cache->delete('key');
+        self::assertNull($this->cache->read('key'));
+    }
 }
